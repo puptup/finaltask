@@ -1,13 +1,17 @@
 package handlers
 
 import (
-	"fmt"
+	"encoding/json"
 	"net/http"
+
+	"github.com/FinalTask/dbrepo"
 )
 
 func GetGroups(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprintf(w, "hi there")
+	groups := dbrepo.GetGroups()
+
+	json.NewEncoder(w).Encode(groups)
 }
 
 func PostGroup(w http.ResponseWriter, r *http.Request) {

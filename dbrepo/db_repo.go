@@ -5,13 +5,15 @@ import (
 	"fmt"
 	"log"
 	"os"
+
+	_ "github.com/lib/pq"
 )
 
-type DBRepo struct {
-	DB *sql.DB
-}
+var repo *sql.DB
 
-var repo = DBRepo{}
+func DBSet(db *sql.DB) {
+	repo = db
+}
 
 func DBInit() *sql.DB {
 	dbinfo := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable",
@@ -22,7 +24,6 @@ func DBInit() *sql.DB {
 		os.Exit(1)
 	}
 
-	repo.DB = db
-
+	DBSet(db)
 	return db
 }

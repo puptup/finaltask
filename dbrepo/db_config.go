@@ -2,6 +2,6 @@ package dbrepo
 
 const (
 	dbUser     = "postgres"
-	dbPassword = "Trollface"
+	dbPassword = "Trollfaceone1"
 	dbName     = "finaltask"
 )
