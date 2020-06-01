@@ -12,7 +12,10 @@ import (
 
 func GetTasks(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	tasks := dbrepo.GetTasks()
+	tasks, err := dbrepo.GetTasks()
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Failed to get tasks")
+	}
 
 	json.NewEncoder(w).Encode(tasks)
 }
@@ -37,7 +40,10 @@ func PostTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newTask := dbrepo.PostTask(task.Title, task.GroupID)
+	newTask, err := dbrepo.PostTask(task.Title, task.GroupID)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Failed to post task")
+	}
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(newTask)
 }
@@ -69,10 +75,25 @@ func PutTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newTask := dbrepo.PutTask(id, task.GroupID, task.Title)
+	newTask, err := dbrepo.PutTask(id, task.GroupID, task.Title)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "Failed to update task")
+	}
 	json.NewEncoder(w).Encode(newTask)
 }
 
 func DeleteTask(w http.ResponseWriter, r *http.Request) {
-
+	w.Header().Set("Content-Type", "application/json")
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil || id == 0 {
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+	err = dbrepo.DeleteTask(id)
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Failed to delete")
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
 }

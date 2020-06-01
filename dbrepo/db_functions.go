@@ -1,146 +1,194 @@
 package dbrepo
 
-import (
-	"log"
-)
-
-func onErrPanic(err error) {
-	if err != nil {
-		log.Panic(err)
-	}
-}
-
-func getTimeframeByTaskID(task_id int) []Timeframe {
+func getTimeframeByTaskID(task_id int) ([]Timeframe, error) {
+	var Timeframes []Timeframe
 	resultTimeframes, err := repo.Query("SELECT * from time_frames where task_id = $1", task_id)
-	onErrPanic(err)
+	if err != nil {
+		return Timeframes, err
+	}
 	defer resultTimeframes.Close()
 
-	var Timeframes []Timeframe
 	for resultTimeframes.Next() {
 		var timeframe Timeframe
 		err := resultTimeframes.Scan(&timeframe.TaskID, &timeframe.From, &timeframe.To)
-		onErrPanic(err)
+		if err != nil {
+			return Timeframes, err
+		}
 
 		Timeframes = append(Timeframes, timeframe)
 	}
-	return Timeframes
+	return Timeframes, nil
 }
 
-func getTaskByGroupID(group_id int) []Task {
+func getTaskByGroupID(group_id int) ([]Task, error) {
+	var Tasks []Task
 	resultTasks, err := repo.Query("SELECT * from tasks where group_id = $1", group_id)
-	onErrPanic(err)
+	if err != nil {
+		return Tasks, err
+	}
 	defer resultTasks.Close()
 
-	var Tasks []Task
 	for resultTasks.Next() {
 		var task Task
 		err := resultTasks.Scan(&task.TaskID, &task.Title, &task.GroupID)
-		onErrPanic(err)
+		if err != nil {
+			return Tasks, err
+		}
 
-		task.Timeframes = getTimeframeByTaskID(task.TaskID)
+		task.Timeframes, err = getTimeframeByTaskID(task.TaskID)
+		if err != nil {
+			return Tasks, err
+		}
 		Tasks = append(Tasks, task)
 	}
-	return Tasks
+	return Tasks, nil
 }
 
 //GetGroups позволяет получить список всех групп из БД
-func GetGroups() GroupsResponse {
+func GetGroups() (GroupsResponse, error) {
+	var GroupsResp GroupsResponse
+
 	resultGroups, err := repo.Query("SELECT * from groups;")
-	onErrPanic(err)
+	if err != nil {
+		return GroupsResp, err
+	}
 	defer resultGroups.Close()
 
 	var Groups []Group
 	for resultGroups.Next() {
 		var group Group
 		err := resultGroups.Scan(&group.GroupID, &group.Title)
-		onErrPanic(err)
+		if err != nil {
+			return GroupsResp, err
+		}
 
-		group.Tasks = getTaskByGroupID(group.GroupID)
+		group.Tasks, err = getTaskByGroupID(group.GroupID)
+		if err != nil {
+			return GroupsResp, err
+		}
 		Groups = append(Groups, group)
 	}
 
-	var GroupsResp GroupsResponse
 	GroupsResp.Groups = Groups
-	return GroupsResp
+	return GroupsResp, nil
 }
 
-func GetTasks() TasksResponse {
+func GetTasks() (TasksResponse, error) {
+	var TasksResp TasksResponse
+
 	resultTasks, err := repo.Query("SELECT * from tasks;")
-	onErrPanic(err)
+	if err != nil {
+		return TasksResp, err
+	}
 	defer resultTasks.Close()
 
 	var Tasks []Task
 	for resultTasks.Next() {
 		var task Task
 		err := resultTasks.Scan(&task.TaskID, &task.Title, &task.GroupID)
-		onErrPanic(err)
+		if err != nil {
+			return TasksResp, err
+		}
 
-		task.Timeframes = getTimeframeByTaskID(task.TaskID)
+		task.Timeframes, err = getTimeframeByTaskID(task.TaskID)
+		if err != nil {
+			return TasksResp, err
+		}
 		Tasks = append(Tasks, task)
 	}
-	var TasksResp TasksResponse
+
 	TasksResp.Tasks = Tasks
-	return TasksResp
+	return TasksResp, nil
 }
 
 //PostGroup позволяет запостить новую группу в БД
-func PostGroup(title string) Group {
+func PostGroup(title string) (Group, error) {
+	var group Group
 	lastInsertId := 0
 	err := repo.QueryRow("INSERT INTO groups(title) values($1) RETURNING group_id", title).Scan(&lastInsertId)
-	onErrPanic(err)
+	if err != nil {
+		return group, err
+	}
 
-	var group Group
 	group.GroupID = lastInsertId
 	group.Title = title
-	return group
+	return group, nil
 }
 
-func PutGroup(id int) {
+func PutGroup(id int, title string) (Group, error) {
+	var group Group
+	_, err := repo.Exec("update groups set title = $1 where group_id = $2;", title, id)
+	if err != nil {
+		return group, err
+	}
 
+	group.GroupID = id
+	group.Title = title
+	return group, nil
 }
 
-func DeleteGroup() {
-
+func DeleteGroup(id int) error {
+	_, err := repo.Exec("DELETE groups WHERE group_id = $1", id)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-func PostTask(title string, group_id int) Task {
+func PostTask(title string, group_id int) (Task, error) {
+	var task Task
 	lastInsertId := 0
 	err := repo.QueryRow("INSERT INTO tasks(title,group_id) values($1,$2) RETURNING task_id", title, group_id).Scan(&lastInsertId)
-	onErrPanic(err)
+	if err != nil {
+		return task, err
+	}
 
-	var task Task
 	task.Title = title
 	task.GroupID = group_id
 	task.TaskID = lastInsertId
-	return task
+	return task, nil
 }
 
-func PutTask(task_id, group_id int, title string) Task {
-	_, err := repo.Exec("update tasks set title = $1, group_id = $2 where task_id = $3;", title, group_id, task_id)
-	onErrPanic(err)
-
+func PutTask(task_id, group_id int, title string) (Task, error) {
 	var task Task
+
+	_, err := repo.Exec("update tasks set title = $1, group_id = $2 where task_id = $3;", title, group_id, task_id)
+	if err != nil {
+		return task, err
+	}
+
 	task.Title = title
 	task.GroupID = group_id
 	task.TaskID = task_id
-	return task
+	return task, nil
 }
 
-func DeleteTask() {
-
+func DeleteTask(id int) error {
+	_, err := repo.Exec("DELETE tasks WHERE task_id = $1", id)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-func PostTimeFrame(task_id int, from, to string) Timeframe {
-	_, err := repo.Exec("INSERT INTO time_frames(task_id,from_time,to_time) values($1,$2,$3)", task_id, from, to)
-	onErrPanic(err)
-
+func PostTimeFrame(task_id int, from, to string) (Timeframe, error) {
 	var timefr Timeframe
+
+	_, err := repo.Exec("INSERT INTO time_frames(task_id,from_time,to_time) values($1,$2,$3)", task_id, from, to)
+	if err != nil {
+		return timefr, err
+	}
+
 	timefr.TaskID = task_id
 	timefr.From = from
 	timefr.To = to
-	return timefr
+	return timefr, nil
 }
 
-func DeleteTimeFrame() {
-
+func DeleteTimeFrame(id int) error {
+	_, err := repo.Exec("DELETE time_frames WHERE task_id = $1", id)
+	if err != nil {
+		return err
+	}
+	return nil
 }
