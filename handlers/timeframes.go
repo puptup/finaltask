@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -31,6 +32,7 @@ func PostTimeframe(w http.ResponseWriter, r *http.Request) {
 
 	newTimeFrame, err := dbrepo.PostTimeFrame(timefr.TaskID, timefr.From, timefr.To)
 	if err != nil {
+		log.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Failed to post timeframe")
 		return
 	}
@@ -48,6 +50,7 @@ func DeleteTimeframe(w http.ResponseWriter, r *http.Request) {
 	}
 	err = dbrepo.DeleteTimeFrame(id)
 	if err != nil {
+		log.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Failed to delete")
 		return
 	}

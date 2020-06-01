@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -13,6 +14,7 @@ func GetGroups(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	groups, err := dbrepo.GetGroups()
 	if err != nil {
+		log.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Failed to get group")
 		return
 	}
@@ -36,6 +38,7 @@ func PostGroup(w http.ResponseWriter, r *http.Request) {
 
 	newGroup, err := dbrepo.PostGroup(group.Title)
 	if err != nil {
+		log.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Failed to post group")
 		return
 	}
@@ -68,6 +71,7 @@ func PutGroup(w http.ResponseWriter, r *http.Request) {
 
 	newGroup, err := dbrepo.PutGroup(id, group.Title)
 	if err != nil {
+		log.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Failed to update group")
 		return
 	}
@@ -84,6 +88,7 @@ func DeleteGroup(w http.ResponseWriter, r *http.Request) {
 	}
 	err = dbrepo.DeleteGroup(id)
 	if err != nil {
+		log.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Failed to delete")
 		return
 	}

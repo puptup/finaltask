@@ -128,7 +128,7 @@ func PutGroup(id int, title string) (Group, error) {
 }
 
 func DeleteGroup(id int) error {
-	_, err := repo.Exec("DELETE groups WHERE group_id = $1", id)
+	_, err := repo.Exec("DELETE FROM groups WHERE group_id = $1", id)
 	if err != nil {
 		return err
 	}
@@ -164,7 +164,7 @@ func PutTask(task_id, group_id int, title string) (Task, error) {
 }
 
 func DeleteTask(id int) error {
-	_, err := repo.Exec("DELETE tasks WHERE task_id = $1", id)
+	_, err := repo.Exec("DELETE FROM tasks WHERE task_id = $1", id)
 	if err != nil {
 		return err
 	}
@@ -186,7 +186,7 @@ func PostTimeFrame(task_id int, from, to string) (Timeframe, error) {
 }
 
 func DeleteTimeFrame(id int) error {
-	_, err := repo.Exec("DELETE time_frames WHERE task_id = $1", id)
+	_, err := repo.Exec("DELETE FROM time_frames WHERE task_id = $1", id)
 	if err != nil {
 		return err
 	}

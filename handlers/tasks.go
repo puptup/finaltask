@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -14,7 +15,9 @@ func GetTasks(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	tasks, err := dbrepo.GetTasks()
 	if err != nil {
+		log.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Failed to get tasks")
+		return
 	}
 
 	json.NewEncoder(w).Encode(tasks)
@@ -42,6 +45,7 @@ func PostTask(w http.ResponseWriter, r *http.Request) {
 
 	newTask, err := dbrepo.PostTask(task.Title, task.GroupID)
 	if err != nil {
+		log.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Failed to post task")
 	}
 	w.WriteHeader(http.StatusCreated)
@@ -77,6 +81,7 @@ func PutTask(w http.ResponseWriter, r *http.Request) {
 
 	newTask, err := dbrepo.PutTask(id, task.GroupID, task.Title)
 	if err != nil {
+		log.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Failed to update task")
 	}
 	json.NewEncoder(w).Encode(newTask)
@@ -92,6 +97,7 @@ func DeleteTask(w http.ResponseWriter, r *http.Request) {
 	}
 	err = dbrepo.DeleteTask(id)
 	if err != nil {
+		log.Println(err)
 		respondWithError(w, http.StatusBadRequest, "Failed to delete")
 		return
 	}
