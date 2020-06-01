@@ -1,24 +1,22 @@
 package dbrepo
 
-import "time"
-
 type Group struct {
 	GroupID int    `json:"id"`
-	Title   string `json:"titile"`
-	Tasks   []Task `json:"tasks"`
+	Title   string `json:"title"`
+	Tasks   []Task `json:"tasks,omitempty"`
 }
 
 type Task struct {
 	TaskID     int         `json:"id"`
-	Title      string      `json:"titile"`
-	GroupID    string      `json:"group"`
-	Timeframes []Timeframe `json:"time_frames"`
+	Title      string      `json:"title"`
+	GroupID    int         `json:"group_id"`
+	Timeframes []Timeframe `json:"time_frames,omitempty"`
 }
 
 type Timeframe struct {
-	TaskID int       `json:"task_id"`
-	From   time.Time `json:"from"`
-	To     time.Time `json:"to"`
+	TaskID int    `json:"task_id"`
+	From   string `json:"from"`
+	To     string `json:"to"`
 }
 
 type GroupsResponse struct {

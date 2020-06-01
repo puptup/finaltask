@@ -7,7 +7,6 @@ import (
 	"github.com/FinalTask/dbrepo"
 	"github.com/FinalTask/handlers"
 	"github.com/gorilla/mux"
-	_ "github.com/lib/pq"
 )
 
 func main() {
