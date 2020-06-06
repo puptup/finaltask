@@ -1,5 +1,7 @@
 package dbrepo
 
+import "time"
+
 func getTimeframeByTaskID(task_id int) ([]Timeframe, error) {
 	var Timeframes []Timeframe
 	resultTimeframes, err := repo.Query("SELECT * from time_frames where task_id = $1", task_id)
@@ -171,7 +173,7 @@ func DeleteTask(id int) error {
 	return nil
 }
 
-func PostTimeFrame(task_id int, from, to string) (Timeframe, error) {
+func PostTimeFrame(task_id int, from, to time.Time) (Timeframe, error) {
 	var timefr Timeframe
 
 	_, err := repo.Exec("INSERT INTO time_frames(task_id,start_at,end_at) values($1,$2,$3)", task_id, from, to)
