@@ -25,16 +25,7 @@ func PostGroup(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	var group dbrepo.Group
-	decoder := json.NewDecoder(r.Body)
-	if err := decoder.Decode(&group); err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
-		return
-	}
-	defer r.Body.Close()
-	if group.Title == "" {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
-		return
-	}
+	parseJsonToStruct(w, r, &group)
 
 	newGroup, err := dbrepo.PostGroup(group.Title)
 	if err != nil {
@@ -52,19 +43,10 @@ func PutGroup(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
 	var group dbrepo.Group
-	decoder := json.NewDecoder(r.Body)
-	if err := decoder.Decode(&group); err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
-		return
-	}
-	defer r.Body.Close()
+	parseJsonToStruct(w, r, &group)
 
-	if group.Title == "" {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
-		return
-	}
 	id, err := strconv.Atoi(vars["id"])
-	if err != nil || id == 0 {
+	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
@@ -82,7 +64,7 @@ func DeleteGroup(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
-	if err != nil || id == 0 {
+	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}

@@ -22,7 +22,6 @@ func DBInit() *sql.DB {
 
 	dbinfo := fmt.Sprintf("user=%s password=%s host=%s dbname=%s port=%s sslmode=disable",
 		config.GetUser(), config.GetPassword(), config.GetHost(), config.GetDBName(), config.GetPort())
-	log.Println(dbinfo)
 	db, err := sql.Open("postgres", dbinfo)
 	if err != nil {
 		log.Panic(err)

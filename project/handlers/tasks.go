@@ -27,21 +27,7 @@ func PostTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	var task dbrepo.Task
-	decoder := json.NewDecoder(r.Body)
-	if err := decoder.Decode(&task); err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
-		return
-	}
-	defer r.Body.Close()
-
-	if task.Title == "" {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
-		return
-	}
-	if task.GroupID == 0 {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
-		return
-	}
+	parseJsonToStruct(w, r, &task)
 
 	newTask, err := dbrepo.PostTask(task.Title, task.GroupID)
 	if err != nil {
@@ -57,24 +43,10 @@ func PutTask(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
 	var task dbrepo.Task
-	decoder := json.NewDecoder(r.Body)
-	if err := decoder.Decode(&task); err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
-		return
-	}
-	defer r.Body.Close()
+	parseJsonToStruct(w, r, &task)
 
-	if task.Title == "" {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
-		return
-	}
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
-		return
-	}
-
-	if task.GroupID == 0 || id == 0 {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
@@ -91,7 +63,7 @@ func DeleteTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
-	if err != nil || id == 0 {
+	if err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}

@@ -1,0 +1,2 @@
+ALTER TABLE time_frames ALTER COLUMN start_at TYPE timestamp without time zone using start_at::timestamp;
+ALTER TABLE time_frames ALTER COLUMN end_at TYPE timestamp without time zone using end_at::timestamp;
