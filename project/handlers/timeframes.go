@@ -14,7 +14,10 @@ func PostTimeframe(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	var timefr dbrepo.Timeframe
-	parseJsonToStruct(w, r, &timefr)
+	err := parseJsonToStruct(w, r, &timefr)
+	if err != nil {
+		return
+	}
 
 	newTimeFrame, err := dbrepo.PostTimeFrame(timefr.TaskID, timefr.From, timefr.To)
 	if err != nil {

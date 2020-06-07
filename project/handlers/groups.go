@@ -25,7 +25,10 @@ func PostGroup(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	var group dbrepo.Group
-	parseJsonToStruct(w, r, &group)
+	err := parseJsonToStruct(w, r, &group)
+	if err != nil {
+		return
+	}
 
 	newGroup, err := dbrepo.PostGroup(group.Title)
 	if err != nil {
@@ -43,7 +46,10 @@ func PutGroup(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
 	var group dbrepo.Group
-	parseJsonToStruct(w, r, &group)
+	err := parseJsonToStruct(w, r, &group)
+	if err != nil {
+		return
+	}
 
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {

@@ -18,12 +18,13 @@ func respondWithError(w http.ResponseWriter, code int, message string) {
 	respondWithJSON(w, code, map[string]string{"error": message})
 }
 
-func parseJsonToStruct(w http.ResponseWriter, r *http.Request, v interface{}) {
+func parseJsonToStruct(w http.ResponseWriter, r *http.Request, v interface{}) error {
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(v); err != nil {
 		log.Println(err)
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
-		return
+		return err
 	}
 	defer r.Body.Close()
+	return nil
 }
