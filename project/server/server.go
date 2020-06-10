@@ -4,14 +4,13 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/FinalTask/dbrepo"
-	"github.com/FinalTask/handlers"
 	"github.com/gorilla/mux"
+	"github.com/puptup/FinalTask/project/dbrepo"
+	"github.com/puptup/FinalTask/project/handlers"
 )
 
 func main() {
-
-	connection := dbrepo.DBInit()
+	connection := dbrepo.RepSQL.DBInit()
 	defer connection.Close()
 
 	router := mux.NewRouter()

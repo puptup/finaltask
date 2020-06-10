@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/FinalTask/dbrepo"
 	"github.com/gorilla/mux"
+	"github.com/puptup/FinalTask/project/dbrepo"
 )
 
 func PostTimeframe(w http.ResponseWriter, r *http.Request) {
@@ -19,7 +19,7 @@ func PostTimeframe(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newTimeFrame, err := dbrepo.PostTimeFrame(timefr.TaskID, timefr.From, timefr.To)
+	newTimeFrame, err := dbrepo.RepSQL.PostTimeFrame(timefr.TaskID, timefr.From, timefr.To)
 	if err != nil {
 		log.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Failed to post timeframe")
@@ -37,7 +37,7 @@ func DeleteTimeframe(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
-	err = dbrepo.DeleteTimeFrame(id)
+	err = dbrepo.RepSQL.DeleteTimeFrame(id)
 	if err != nil {
 		log.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Failed to delete")

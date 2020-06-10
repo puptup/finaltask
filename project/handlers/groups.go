@@ -6,18 +6,19 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/FinalTask/dbrepo"
 	"github.com/gorilla/mux"
+	"github.com/puptup/FinalTask/project/dbrepo"
 )
 
 func GetGroups(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	groups, err := dbrepo.GetGroups()
+	groups, err := dbrepo.RepSQL.GetGroups()
 	if err != nil {
 		log.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Failed to get group")
 		return
 	}
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(groups)
 }
 
@@ -30,7 +31,7 @@ func PostGroup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newGroup, err := dbrepo.PostGroup(group.Title)
+	newGroup, err := dbrepo.RepSQL.PostGroup(group.Title)
 	if err != nil {
 		log.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Failed to post group")
@@ -57,12 +58,13 @@ func PutGroup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newGroup, err := dbrepo.PutGroup(id, group.Title)
+	newGroup, err := dbrepo.RepSQL.PutGroup(id, group.Title)
 	if err != nil {
 		log.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Failed to update group")
 		return
 	}
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(newGroup)
 }
 
@@ -74,7 +76,7 @@ func DeleteGroup(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
-	err = dbrepo.DeleteGroup(id)
+	err = dbrepo.RepSQL.DeleteGroup(id)
 	if err != nil {
 		log.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Failed to delete")

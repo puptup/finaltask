@@ -9,15 +9,15 @@ import (
 	_ "github.com/lib/pq"
 )
 
-var repo *sql.DB
+var RepSQL DBWorker = &DBRepo{}
 
-//DBSet установит объект *DB, через который можно будет взаимодействовать с базой данных
-func DBSet(db *sql.DB) {
-	repo = db
+//DBRepo structure for interacting with the database
+type DBRepo struct {
+	DB *sql.DB
 }
 
 //DBInit открытие соединиение с БД. В ней же и устанавливается DBSet.
-func DBInit() *sql.DB {
+func (repo *DBRepo) DBInit() *sql.DB {
 	config := DBConfig{}
 
 	dbinfo := fmt.Sprintf("user=%s password=%s host=%s dbname=%s port=%s sslmode=disable",
@@ -28,6 +28,6 @@ func DBInit() *sql.DB {
 		os.Exit(1)
 	}
 
-	DBSet(db)
+	repo.DB = db
 	return db
 }
