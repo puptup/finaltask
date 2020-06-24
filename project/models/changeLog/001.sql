@@ -9,6 +9,6 @@ CREATE TABLE tasks(
 );
 CREATE TABLE time_frames(
     task_id int REFERENCES tasks(task_id) ON DELETE CASCADE,
-    start_at timestamp without time zone using start_at::timestamp,
-    end_at timestamp without time zone using end_at::timestamp 
+    start_at timestamp without time zone,
+    end_at timestamp without time zone 
 );
