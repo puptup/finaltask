@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"os"
 
 	_ "github.com/lib/pq"
 )
@@ -25,7 +24,6 @@ func (repo *DBRepo) DBInit() *sql.DB {
 	db, err := sql.Open("postgres", dbinfo)
 	if err != nil {
 		log.Panic(err)
-		os.Exit(1)
 	}
 
 	repo.DB = db

@@ -1,3 +1,3 @@
-module github.com/puptup/FinalTask/project
+module github.com/puptup/finaltask/project
 
 go 1.14

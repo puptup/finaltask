@@ -7,7 +7,11 @@ import (
 )
 
 func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
-	response, _ := json.Marshal(payload)
+	response, err := json.Marshal(payload)
+	if err != nil {
+		log.Println(err)
+		respondWithError(w, 500, err.Error())
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)

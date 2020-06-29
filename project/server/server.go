@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/puptup/FinalTask/project/dbrepo"
-	"github.com/puptup/FinalTask/project/handlers"
+	"github.com/puptup/finaltask/project/dbrepo"
+	"github.com/puptup/finaltask/project/handlers"
 )
 
 func main() {

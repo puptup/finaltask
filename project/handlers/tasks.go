@@ -7,7 +7,7 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
-	"github.com/puptup/FinalTask/project/dbrepo"
+	"github.com/puptup/finaltask/project/dbrepo"
 )
 
 func GetTasks(w http.ResponseWriter, r *http.Request) {
@@ -23,8 +23,6 @@ func GetTasks(w http.ResponseWriter, r *http.Request) {
 }
 
 func PostTask(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
 	var task dbrepo.Task
 	err := parseJsonToStruct(w, r, &task)
 	if err != nil {
@@ -37,12 +35,12 @@ func PostTask(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusInternalServerError, "Failed to post task")
 		return
 	}
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(newTask)
 }
 
 func PutTask(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(r)
 
 	var task dbrepo.Task
@@ -63,11 +61,12 @@ func PutTask(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusInternalServerError, "Failed to update task")
 		return
 	}
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(newTask)
+	w.WriteHeader(http.StatusOK)
 }
 
 func DeleteTask(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -80,5 +79,6 @@ func DeleteTask(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusBadRequest, "Failed to delete")
 		return
 	}
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusNoContent)
 }

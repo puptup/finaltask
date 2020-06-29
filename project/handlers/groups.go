@@ -7,24 +7,22 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
-	"github.com/puptup/FinalTask/project/dbrepo"
+	"github.com/puptup/finaltask/project/dbrepo"
 )
 
 func GetGroups(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 	groups, err := dbrepo.RepSQL.GetGroups()
 	if err != nil {
 		log.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Failed to get group")
 		return
 	}
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(groups)
 }
 
 func PostGroup(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
 	var group dbrepo.Group
 	err := parseJsonToStruct(w, r, &group)
 	if err != nil {
@@ -37,13 +35,13 @@ func PostGroup(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusInternalServerError, "Failed to post group")
 		return
 	}
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(newGroup)
 
 }
 
 func PutGroup(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(r)
 
 	var group dbrepo.Group
@@ -64,12 +62,12 @@ func PutGroup(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusInternalServerError, "Failed to update group")
 		return
 	}
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(newGroup)
 }
 
 func DeleteGroup(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
