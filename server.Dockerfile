@@ -4,8 +4,6 @@ WORKDIR app/
 
 COPY project .
 
-WORKDIR server
-
 RUN go build server.go
 
 CMD ["./server"]
