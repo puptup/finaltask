@@ -11,7 +11,7 @@ import (
 )
 
 func GetGroups(w http.ResponseWriter, r *http.Request) {
-	groups, err := dbrepo.RepSQL.GetGroups()
+	groups, err := repDB.GetGroups()
 	if err != nil {
 		log.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Failed to get group")
@@ -29,7 +29,7 @@ func PostGroup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newGroup, err := dbrepo.RepSQL.PostGroup(group.Title)
+	newGroup, err := repDB.PostGroup(group.Title)
 	if err != nil {
 		log.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Failed to post group")
@@ -56,7 +56,7 @@ func PutGroup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newGroup, err := dbrepo.RepSQL.PutGroup(id, group.Title)
+	newGroup, err := repDB.PutGroup(id, group.Title)
 	if err != nil {
 		log.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Failed to update group")
@@ -74,7 +74,7 @@ func DeleteGroup(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
-	err = dbrepo.RepSQL.DeleteGroup(id)
+	err = repDB.DeleteGroup(id)
 	if err != nil {
 		log.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Failed to delete")

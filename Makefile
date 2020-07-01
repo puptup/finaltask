@@ -1,15 +1,19 @@
-start:
+.PHONY : start stop restart migrator logs all
+
+all : start migrator logs
+
+start :
 	docker-compose build
 	docker-compose up -d
 
-stop: 
+stop : 
 	docker-compose down
 
-migrator:
+migrator :
 	docker-compose run --rm migrator update
 	docker-compose run --rm migrator changelogSync
 
-logs: 
+logs : 
 	docker-compose logs -f
 
-restart: stop start 
+restart : stop start 

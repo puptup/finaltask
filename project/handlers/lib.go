@@ -4,7 +4,15 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+
+	"github.com/puptup/finaltask/project/dbrepo"
 )
+
+var repDB dbrepo.DBWorker
+
+func ConnectDBToHandlers(dbw dbrepo.DBWorker) {
+	repDB = dbw
+}
 
 func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	response, err := json.Marshal(payload)

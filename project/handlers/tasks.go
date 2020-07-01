@@ -12,7 +12,7 @@ import (
 
 func GetTasks(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	tasks, err := dbrepo.RepSQL.GetTasks()
+	tasks, err := repDB.GetTasks()
 	if err != nil {
 		log.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Failed to get tasks")
@@ -29,7 +29,7 @@ func PostTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newTask, err := dbrepo.RepSQL.PostTask(task.Title, task.GroupID)
+	newTask, err := repDB.PostTask(task.Title, task.GroupID)
 	if err != nil {
 		log.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Failed to post task")
@@ -55,7 +55,7 @@ func PutTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newTask, err := dbrepo.RepSQL.PutTask(id, task.GroupID, task.Title)
+	newTask, err := repDB.PutTask(id, task.GroupID, task.Title)
 	if err != nil {
 		log.Println(err)
 		respondWithError(w, http.StatusInternalServerError, "Failed to update task")
@@ -73,7 +73,7 @@ func DeleteTask(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
-	err = dbrepo.RepSQL.DeleteTask(id)
+	err = repDB.DeleteTask(id)
 	if err != nil {
 		log.Println(err)
 		respondWithError(w, http.StatusBadRequest, "Failed to delete")

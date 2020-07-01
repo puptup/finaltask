@@ -7,4 +7,3 @@ COPY project .
 RUN go build server.go
 
 CMD ["./server"]
-

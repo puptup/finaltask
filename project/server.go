@@ -10,8 +10,11 @@ import (
 )
 
 func main() {
-	connection := dbrepo.RepSQL.DBInit()
-	defer connection.Close()
+	db := dbrepo.GetDB()
+	connectionToDB := db.DBInit()
+	defer connectionToDB.Close()
+
+	handlers.ConnectDBToHandlers(db)
 
 	router := mux.NewRouter()
 	GroupsRouter := router.PathPrefix("/groups").Subrouter()

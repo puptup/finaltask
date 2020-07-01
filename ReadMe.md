@@ -1,26 +1,28 @@
 ## How to use
 
-How to run project:
-1. Start server and database with:
- ```
- make start
- ```
-2. Run migrator with:
- ```
- make migrator
- ```
+Run the whole project:
+```
+make
+```
 
-How to restart project:
+## Additional commands
+
+Migrate database:
+```
+make migrator
+```
+
+Restart project:
 ```
 make restart
 ```
 
-How to stop project:
+Stop project:
 ```
 make stop
 ```
 
-How to see logs:
+View logs:
 ```
 make logs
 ```

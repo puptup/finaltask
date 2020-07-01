@@ -8,7 +8,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-var RepSQL DBWorker = &DBRepo{}
+var repSQL DBWorker = &DBRepo{}
 
 //DBRepo structure for interacting with the database
 type DBRepo struct {
@@ -28,4 +28,8 @@ func (repo *DBRepo) DBInit() *sql.DB {
 
 	repo.DB = db
 	return db
+}
+
+func GetDB() DBWorker {
+	return repSQL
 }
