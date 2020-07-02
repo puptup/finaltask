@@ -7,6 +7,11 @@ make
 
 ## Additional commands
 
+Start project
+```
+make start
+```
+
 Migrate database:
 ```
 make migrator
