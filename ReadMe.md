@@ -7,7 +7,7 @@ make
 
 ## Additional commands
 
-Start project
+Start project:
 ```
 make start
 ```
